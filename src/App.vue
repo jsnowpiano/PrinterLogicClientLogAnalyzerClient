@@ -9,6 +9,7 @@ const username = ref('');
 const password = ref('');
 const email = ref('');
 const loginError = ref(''); // Ref to store the login error message
+const createAccountError = ref(''); // Ref to store the create account error message
 
 onMounted(() => {
   if (!Cookies.get('userLoggedIn')) {
@@ -51,6 +52,12 @@ const handleLogout = () => {
 };
 
 const handleCreateAccount = () => {
+  // Validate username and password length
+  if (username.value.length < 4 || password.value.length < 4) {
+    createAccountError.value = 'Username and password must be at least 4 characters long';
+    return;
+  }
+
   fetch('https://printerlogicclientloganalyzer.onrender.com/user', {
     method: 'POST',
     headers: {
@@ -66,8 +73,10 @@ const handleCreateAccount = () => {
       console.log('User created:', data);
       showCreateAccount.value = false;
       showLogin.value = true;
+      createAccountError.value = ''; // Clear the error message on successful account creation
     })
     .catch(error => {
+      createAccountError.value = 'Error creating user: ' + error.message; // Set the error message
       console.error('Error creating user:', error);
     });
 };
@@ -130,6 +139,7 @@ const showLoginForm = () => {
         <v-text-field label="Password" type="password" v-model="password"></v-text-field>
         <v-btn @click="handleCreateAccount">Create Account</v-btn>
         <v-btn @click="showLoginForm">Back to Login</v-btn>
+        <p v-if="createAccountError" class="error-message">{{ createAccountError }}</p> <!-- Display the error message -->
       </div>
     </div>
   </v-app>
