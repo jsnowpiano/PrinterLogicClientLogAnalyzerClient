@@ -8,6 +8,7 @@ const showCreateAccount = ref(false);
 const username = ref('');
 const password = ref('');
 const email = ref('');
+const loginError = ref(''); // Ref to store the login error message
 
 onMounted(() => {
   if (!Cookies.get('userLoggedIn')) {
@@ -17,7 +18,7 @@ onMounted(() => {
 
 const handleLogin = () => {
   // Perform login logic here
-  fetch('http://localhost:8080/login', {
+  fetch('https://printerlogicclientloganalyzer.onrender.com/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -32,11 +33,14 @@ const handleLogin = () => {
       if (data.success) {
         Cookies.set('userLoggedIn', 'true', { expires: 7 }); // Set cookie to expire in 7 days
         showLogin.value = false;
+        loginError.value = ''; // Clear the error message on successful login
       } else {
+        loginError.value = 'Login failed: ' + data.message; // Set the error message
         console.error('Login failed:', data.message);
       }
     })
     .catch(error => {
+      loginError.value = 'Error logging in: ' + error.message; // Set the error message
       console.error('Error logging in:', error);
     });
 };
@@ -115,6 +119,7 @@ const showLoginForm = () => {
         <v-text-field label="Password" type="password" v-model="password"></v-text-field>
         <v-btn @click="handleLogin">Login</v-btn>
         <v-btn @click="showCreateAccountForm">Create Account</v-btn>
+        <p v-if="loginError" class="error-message">{{ loginError }}</p> <!-- Display the error message -->
       </div>
     </div>
 
@@ -186,5 +191,10 @@ html, body {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 400px; /* Adjust the width as needed */
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
 }
 </style>
