@@ -5,11 +5,10 @@ import Home from '@/components/Home.vue';
 
 const showLogin = ref(false);
 const showCreateAccount = ref(false);
-const username = ref('');
 const password = ref('');
 const email = ref('');
-const loginError = ref(''); // Ref to store the login error message
-const createAccountError = ref(''); // Ref to store the create account error message
+const loginError = ref('');
+const createAccountError = ref('');
 
 onMounted(() => {
   if (!Cookies.get('userLoggedIn')) {
@@ -18,7 +17,6 @@ onMounted(() => {
 });
 
 const handleLogin = () => {
-  // Perform login logic here
   fetch('https://printerlogicclientloganalyzer.onrender.com/login', {
     method: 'POST',
     headers: {
@@ -32,16 +30,16 @@ const handleLogin = () => {
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        Cookies.set('userLoggedIn', 'true', { expires: 7 }); // Set cookie to expire in 7 days
+        Cookies.set('userLoggedIn', 'true', { expires: 7 });
         showLogin.value = false;
-        loginError.value = ''; // Clear the error message on successful login
+        loginError.value = '';
       } else {
-        loginError.value = 'Login failed: ' + data.message; // Set the error message
+        loginError.value = 'Login failed: ' + data.message; 
         console.error('Login failed:', data.message);
       }
     })
     .catch(error => {
-      loginError.value = 'Error logging in: ' + error.message; // Set the error message
+      loginError.value = 'Error logging in: ' + error.message;
       console.error('Error logging in:', error);
     });
 };
@@ -52,8 +50,7 @@ const handleLogout = () => {
 };
 
 const handleCreateAccount = () => {
-  // Validate username and password length
-  if (username.value.length < 4 || password.value.length < 4) {
+  if (email.value.length < 4 || password.value.length < 4) {
     createAccountError.value = 'Username and password must be at least 4 characters long';
     return;
   }
@@ -73,10 +70,10 @@ const handleCreateAccount = () => {
       console.log('User created:', data);
       showCreateAccount.value = false;
       showLogin.value = true;
-      createAccountError.value = ''; // Clear the error message on successful account creation
+      createAccountError.value = '';
     })
     .catch(error => {
-      createAccountError.value = 'Error creating user: ' + error.message; // Set the error message
+      createAccountError.value = 'Error creating user: ' + error.message;
       console.error('Error creating user:', error);
     });
 };
