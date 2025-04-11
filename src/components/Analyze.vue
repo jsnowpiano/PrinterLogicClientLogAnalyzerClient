@@ -73,45 +73,43 @@
         return data;
       },
       async generateReports() {
-        try {
-          // Check if a file has been uploaded
-          if (!this.fileContent) {
-            alert("Please upload a file before generating reports.");
-            return;
-          }
+          try {
+            if (!this.fileContent) {
+              alert("Please upload a file before generating reports.");
+              return;
+            }
 
-          await this.postReports();
-          const logs = await this.loadLogs();
-          this.fileContent = null;
-          console.log(logs);
 
-          this.errors = [];
-          this.reports = [];
-          this.headerData = [];
+            this.errors = [];
+            this.reports = [];
+            this.headerData = [];
 
-          const uniqueLogs = new Set();
+            await this.postReports();
+            const logs = await this.loadLogs();
+            console.log(logs);
 
-          for (let i = 0; i < logs.length; i++) {
-            if (!uniqueLogs.has(logs[i].id)) {
-              uniqueLogs.add(logs[i].id);
-              if (logs[i].type === "error") {
-                this.errors.push(logs[i]);
-              } else if (logs[i].type === "report") {
-                console.log(logs[i]);
-                this.reports.push(logs[i]);
-              } else {
-                this.headerData.push(logs[i]);
+            const uniqueLogs = new Set();
+
+            for (let i = 0; i < logs.length; i++) {
+              if (!uniqueLogs.has(logs[i].id)) {
+                uniqueLogs.add(logs[i].id);
+                if (logs[i].type === "error") {
+                  this.errors.push(logs[i]);
+                } else if (logs[i].type === "report") {
+                  console.log(logs[i]);
+                  this.reports.push(logs[i]);
+                } else {
+                  this.headerData.push(logs[i]);
+                }
               }
             }
-    }
-  } catch (error) {
-    console.error("Error generating reports:", error);
-  }
-  this.fileContent = null;
-  this.errors = [];
-  this.reports = [];
-  this.headerData = [];
-}
+          } catch (error) {
+            console.error("Error generating reports:", error);
+          } finally {
+            // Ensure fileContent is cleared after processing
+            this.fileContent = null;
+          }
+        }
     }
   };
   </script>
