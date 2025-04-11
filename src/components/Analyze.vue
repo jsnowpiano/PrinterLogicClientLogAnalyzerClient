@@ -64,6 +64,7 @@
             logs: this.fileContent
           })
         });
+        this.fileContent = null;
         return response;
       },
       async loadLogs() {
