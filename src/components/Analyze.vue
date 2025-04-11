@@ -73,35 +73,41 @@
         return data;
       },
       async generateReports() {
-        try {
-          await this.postReports();
-          const logs = await this.loadLogs();
-          this.fileContent = null;
-          console.log(logs);
-  
-          this.errors = [];
-          this.reports = [];
-          this.headerData = [];
-  
-          const uniqueLogs = new Set();
-  
-          for (let i = 0; i < logs.length; i++) {
-            if (!uniqueLogs.has(logs[i].id)) {
-              uniqueLogs.add(logs[i].id);
-              if (logs[i].type === "error") {
-                this.errors.push(logs[i]);
-              } else if (logs[i].type === "report") {
-                console.log(logs[i]);
-                this.reports.push(logs[i]);
-              } else {
-                this.headerData.push(logs[i]);
-              }
-            }
-          }
-        } catch (error) {
-          console.error("Error generating reports:", error);
+  try {
+    // Check if a file has been uploaded
+    if (!this.fileContent) {
+      alert("Please upload a file before generating reports.");
+      return;
+    }
+
+    await this.postReports();
+    const logs = await this.loadLogs();
+    this.fileContent = null;
+    console.log(logs);
+
+    this.errors = [];
+    this.reports = [];
+    this.headerData = [];
+
+    const uniqueLogs = new Set();
+
+    for (let i = 0; i < logs.length; i++) {
+      if (!uniqueLogs.has(logs[i].id)) {
+        uniqueLogs.add(logs[i].id);
+        if (logs[i].type === "error") {
+          this.errors.push(logs[i]);
+        } else if (logs[i].type === "report") {
+          console.log(logs[i]);
+          this.reports.push(logs[i]);
+        } else {
+          this.headerData.push(logs[i]);
         }
       }
+    }
+  } catch (error) {
+    console.error("Error generating reports:", error);
+  }
+}
     }
   };
   </script>
