@@ -73,43 +73,43 @@
         return data;
       },
       async generateReports() {
-          try {
-            if (!this.fileContent) {
-              alert("Please upload a file before generating reports.");
-              return;
-            }
+  try {
+    // If no file is uploaded, simply return without doing anything
+    if (!this.fileContent) {
+      return;
+    }
 
+    // Clear previous data before generating new reports
+    this.errors = [];
+    this.reports = [];
+    this.headerData = [];
 
-            this.errors = [];
-            this.reports = [];
-            this.headerData = [];
+    await this.postReports();
+    const logs = await this.loadLogs();
+    console.log(logs);
 
-            await this.postReports();
-            const logs = await this.loadLogs();
-            console.log(logs);
+    const uniqueLogs = new Set();
 
-            const uniqueLogs = new Set();
-
-            for (let i = 0; i < logs.length; i++) {
-              if (!uniqueLogs.has(logs[i].id)) {
-                uniqueLogs.add(logs[i].id);
-                if (logs[i].type === "error") {
-                  this.errors.push(logs[i]);
-                } else if (logs[i].type === "report") {
-                  console.log(logs[i]);
-                  this.reports.push(logs[i]);
-                } else {
-                  this.headerData.push(logs[i]);
-                }
-              }
-            }
-          } catch (error) {
-            console.error("Error generating reports:", error);
-          } finally {
-            // Ensure fileContent is cleared after processing
-            this.fileContent = null;
-          }
+    for (let i = 0; i < logs.length; i++) {
+      if (!uniqueLogs.has(logs[i].id)) {
+        uniqueLogs.add(logs[i].id);
+        if (logs[i].type === "error") {
+          this.errors.push(logs[i]);
+        } else if (logs[i].type === "report") {
+          console.log(logs[i]);
+          this.reports.push(logs[i]);
+        } else {
+          this.headerData.push(logs[i]);
         }
+      }
+    }
+  } catch (error) {
+    console.error("Error generating reports:", error);
+  } finally {
+    // Ensure fileContent is cleared after processing
+    this.fileContent = null;
+  }
+}
     }
   };
   </script>
